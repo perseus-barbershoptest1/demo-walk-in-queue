@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Walk-In Check-In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Load DEMO configuration -->
+    <script src="demo_config.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #818cf8;
+            --primary-glow: rgba(129, 140, 248, 0.5);
+            --secondary: #a78bfa;
+            --secondary-glow: rgba(167, 139, 250, 0.5);
+            --success: #34d399;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --bg-dark: #0c0a2e;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        html {
+            height: auto;
+            overflow-y: visible;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .bg-animate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--bg-dark);
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: move 20s infinite alternate;
+            transform: translateZ(0);
+        }
+
+        .blob-1 {
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+        }
+
+        .blob-2 {
+            bottom: -100px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+            animation-duration: 25s;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+
+            to {
+                transform: translate(80px, 80px) rotate(90deg) scale(1.1);
+            }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            left: -200px;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -150px;
+            animation: float 15s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px, 40px) scale(1.1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .demo-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.1));
+            border: 2px solid rgba(251, 191, 36, 0.4);
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .demo-banner-icon {
+            font-size: 24px;
+        }
+
+        .demo-banner-text {
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .demo-banner-sub {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .shop-logo {
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 0 12px var(--primary-glow));
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            padding-left: 45px;
+        }
+
+        .phone-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .country-code {
+            position: absolute;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .phone-input-wrapper input {
+            padding-left: 80px;
+        }
+
+        .barber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .barber-option {
+            position: relative;
+        }
+
+        .barber-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .barber-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .barber-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .barber-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .barber-wait {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .wait-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .wait-low {
+            background: #10b981;
+        }
+
+        .wait-medium {
+            background: #f59e0b;
+        }
+
+        .wait-high {
+            background: #ef4444;
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card {
+            border-color: var(--primary);
+            background: rgba(129, 140, 248, 0.15);
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-4px);
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card .barber-avatar {
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.1);
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card .barber-name {
+            color: var(--primary);
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .barber-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .loading-spinner-small {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .service-container {
+            margin-bottom: 25px;
+        }
+
+        .service-scroll {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 8px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--glass-border);
+        }
+
+        .service-option {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .service-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .service-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03);
+            gap: 12px;
+        }
+
+        .service-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .service-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .service-details {
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .service-price {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 18px;
+            white-space: nowrap;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .service-option input[type="radio"]:checked+.service-label {
+            border-color: var(--primary);
+            background: rgba(129, 140, 248, 0.15);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .service-option input[type="radio"]:checked+.service-label .service-name {
+            color: var(--primary);
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .service-label:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 0 25px var(--primary-glow);
+            padding: 20px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .error-message p {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        #successOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.98), rgba(49, 46, 129, 0.98));
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .success-icon-wrap {
+            width: 120px;
+            height: 120px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .success-checkmark {
+            font-size: 64px;
+            animation: checkPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            display: inline-block;
+        }
+
+        @keyframes checkPop {
+            0% {
+                transform: scale(0) rotate(-15deg);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.2) rotate(10deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .success-content h2 {
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(to bottom, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .success-content p {
+            font-size: 18px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .success-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .success-actions .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .disclaimer-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .disclaimer-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .disclaimer-notice p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .disclaimer-notice strong {
+            color: #fbbf24;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                display: block;
+                padding: 20px 12px 60px 12px;
+                overflow-y: auto;
+            }
+
+            .card {
+                padding: 24px 16px;
+                border-radius: 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .barber-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .service-scroll {
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animate">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container">
+        <!-- DEMO MODE BANNER -->
+        <div class="demo-banner">
+            <span class="demo-banner-icon">🎭</span>
+            <div>
+                <div class="demo-banner-text">DEMO MODE - No QR Code Required</div>
+                <div class="demo-banner-sub">No geolocation or token validation</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="header">
+                <div id="shopLogo"></div>
+                <h1 id="headerTitle">✂️ Walk-In Check-In</h1>
+                <p id="headerSubtitle">Select your barber and service to join the queue</p>
+            </div>
+
+            <div id="errorMessage" class="error-message">
+                <p id="errorText"></p>
+            </div>
+
+            <form id="checkinForm">
+                <!-- Barber Selection -->
+                <div class="form-group">
+                    <label>Select Your Barber <span class="required">*</span></label>
+                    <div class="barber-grid" id="barberGrid">
+                        <div style="grid-column: 1/-1; text-align: center; padding: 20px;">
+                            <div class="loading-spinner-small" style="margin: 0 auto;"></div>
+                            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Loading barbers...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="form-group">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required
+                            autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <div class="input-group phone-input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <span class="country-code" id="countryCode">+1</span>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required
+                            autocomplete="tel-national">
+                    </div>
+                </div>
+
+                <!-- Service Selection -->
+                <div class="form-group">
+                    <label>Service Type <span class="required">*</span></label>
+                    <div class="service-container">
+                        <div class="service-scroll" id="serviceList">
+                            <!-- Services will be rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wait Time Disclaimer -->
+                <div class="disclaimer-notice">
+                    <span class="disclaimer-icon">ℹ️</span>
+                    <p>All wait times are <strong>estimates only</strong> and are not guaranteed. Actual wait times may
+                        vary based on service complexity, walk-ins, and other factors.</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText">Join Queue</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay">
+        <div class="success-icon-wrap">
+            <span class="success-checkmark">✅</span>
+        </div>
+        <div class="success-content">
+            <h2>You're in line!</h2>
+            <p>We've added you to <span id="selectedBarberName"></span>'s queue. Keep an eye on your phone—we'll text
+                you when it's time to head in.</p>
+            <div class="success-actions">
+                <button class="btn btn-primary" onclick="resetForm()">Done</button>
+                <button class="btn btn-secondary" onclick="resetForm()">Check in another customer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DEMO MODE - No Security Validation
+        // ============================================
+
+        const CONFIG = {
+            checkinUrl: getApiUrl('checkin'),
+            dashboardUrl: getApiUrl('queue'),
+            barbers: SHOP_CONFIG.barbers,
+            services: SHOP_CONFIG.services
+        };
+
+        let queueData = [];
+        const phoneInput = document.getElementById('phone');
+
+        // ============================================
+        // BRANDING SETUP
+        // ============================================
+        function setupBranding() {
+            const headerTitle = document.getElementById('headerTitle');
+            const headerSubtitle = document.getElementById('headerSubtitle');
+            const shopLogoDiv = document.getElementById('shopLogo');
+
+            document.getElementById('countryCode').textContent = SHOP_CONFIG.sms.countryCode;
+
+            if (SHOP_CONFIG.useGenericBranding) {
+                headerTitle.innerHTML = '✂️ Walk-In Check-In';
+                headerSubtitle.textContent = 'Select your barber and service to join the queue';
+                document.title = 'Walk-In Check-In (Demo)';
+            } else {
+                headerTitle.innerHTML = `✂️ ${SHOP_CONFIG.shopName}`;
+                headerSubtitle.textContent = SHOP_CONFIG.shopTagline || 'Walk-In Check-In';
+                document.title = SHOP_CONFIG.shopName + ' Check-In (Demo)';
+            }
+
+            if (SHOP_CONFIG.logoUrl) {
+                shopLogoDiv.innerHTML = `<img src="${SHOP_CONFIG.logoUrl}" class="shop-logo" alt="${SHOP_CONFIG.shopName}">`;
+            }
+        }
+
+        // ============================================
+        // RENDER SERVICES FROM CONFIG
+        // ============================================
+        function renderServices() {
+            const container = document.getElementById('serviceList');
+            const servicesHTML = CONFIG.services.map((service, index) => {
+                const durationText = formatDuration(service.duration);
+                const priceText = SHOP_CONFIG.display.showPrices ? formatPrice(service.price) : '';
+                const descText = service.description ? `<span>💈 ${service.description}</span>` : '';
+                return `
+                    <div class="service-option">
+                        <input type="radio" id="${service.id}" name="service" value="${service.name}" data-duration="${service.duration}" ${index === 0 ? 'checked' : ''}>
+                        <label for="${service.id}" class="service-label">
+                            <div class="service-info">
+                                <div class="service-name">${service.name}</div>
+                                <div class="service-details">
+                                    <span>⏱️ ${durationText}</span>
+                                    ${descText}
+                                </div>
+                            </div>
+                            ${priceText ? `<div class="service-price">${priceText}</div>` : ''}
+                        </label>
+                    </div>
+                `;
+            }).join('');
+            container.innerHTML = servicesHTML;
+        }
+
+        // ============================================
+        // PHONE FORMATTING
+        // ============================================
+        function normalizePhoneNumber(value) {
+            let digits = value.replace(/\D/g, '');
+            if (digits.length === 11 && digits.startsWith('1')) digits = digits.substring(1);
+            if (digits.length > 10) digits = digits.slice(-10);
+            return digits;
+        }
+
+        function formatPhoneDisplay(digits) {
+            if (digits.length === 0) return '';
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+        }
+
+        function handlePhoneInput(e) {
+            const digits = normalizePhoneNumber(e.target.value);
+            e.target.value = formatPhoneDisplay(digits);
+        }
+
+        phoneInput.addEventListener('input', handlePhoneInput);
+        phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
+        phoneInput.addEventListener('change', handlePhoneInput);
+
+        // ============================================
+        // QUEUE DATA
+        // ============================================
+        async function loadQueueData() {
+            try {
+                const response = await fetch(CONFIG.dashboardUrl);
+                if (!response.ok) { queueData = []; return; }
+                const rawText = await response.text();
+                if (!rawText || rawText.trim() === '' || rawText.trim() === '{}') { queueData = []; return; }
+                let data = JSON.parse(rawText);
+                queueData = Array.isArray(data) ? data : (data && typeof data === 'object' ? [data] : []);
+            } catch (error) {
+                queueData = [];
+            }
+        }
+
+        function calculateWaitTime(barberId) {
+            const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
+            const barberQueue = queueData.filter(c => c && c.barber_id === barberId && activeStatuses.includes(String(c.status || '').toUpperCase().trim()));
+            if (barberQueue.length === 0) return 0;
+            return Math.ceil(barberQueue.reduce((sum, c) => sum + (parseInt(c.service_duration) || 40), 0));
+        }
+
+        function renderBarbers() {
+            const grid = document.getElementById('barberGrid');
+            const barbersHTML = CONFIG.barbers.map(barber => {
+                const waitTime = calculateWaitTime(barber.id);
+                let waitClass = 'wait-low';
+                let waitText = 'Available';
+
+                if (barber.id === 'next_available') {
+                    waitText = 'Auto-assign';
+                } else if (waitTime === 0) {
+                    waitText = 'No wait';
+                } else if (waitTime < 30) {
+                    waitClass = 'wait-low';
+                    waitText = `~${waitTime} min`;
+                } else if (waitTime < 60) {
+                    waitClass = 'wait-medium';
+                    waitText = `~${waitTime} min`;
+                } else {
+                    waitClass = 'wait-high';
+                    waitText = `~${Math.ceil(waitTime / 60)} hr`;
+                }
+
+                return `
+                    <div class="barber-option">
+                        <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}" ${barber.id === 'next_available' ? 'checked' : ''}>
+                        <label for="barber-${barber.id}" class="barber-card">
+                            <div class="barber-avatar" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">${barber.avatar}</div>
+                            <div class="barber-name">${barber.name}</div>
+                            ${SHOP_CONFIG.display.showWaitTimes ? `<div class="barber-wait"><span class="wait-indicator ${waitClass}"></span>${waitText}</div>` : ''}
+                        </label>
+                    </div>
+                `;
+            }).join('');
+            grid.innerHTML = barbersHTML;
+        }
+
+        function getSelectedBarber() {
+            const selected = document.querySelector('input[name="barber"]:checked');
+            return selected ? selected.value : 'next_available';
+        }
+
+        function getServiceDuration() {
+            const selectedService = document.querySelector('input[name="service"]:checked');
+            return selectedService ? parseInt(selectedService.dataset.duration) : 40;
+        }
+
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
+        document.getElementById('checkinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+
+            errorMessage.style.display = 'none';
+            submitBtn.disabled = true;
+            btnText.textContent = 'Joining Queue...';
+
+            try {
+                const name = document.getElementById('name').value.trim();
+                const phone = normalizePhoneNumber(phoneInput.value);
+                const service = document.querySelector('input[name="service"]:checked').value;
+                const serviceDuration = getServiceDuration();
+                const barberId = getSelectedBarber();
+
+                if (!name || !phone || !service || !barberId) throw new Error('Please fill in all required fields');
+                if (phone.length !== 10) throw new Error('Please enter a valid 10-digit phone number');
+
+                const response = await fetch(CONFIG.checkinUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, service, service_duration: serviceDuration, barber_id: barberId })
+                });
+
+                if (response.ok) {
+                    const selectedBarberObj = CONFIG.barbers.find(b => b.id === barberId);
+                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name : 'your selected barber';
+                    document.getElementById('successOverlay').style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('checkinForm').reset();
+                    await loadQueueData();
+                    renderBarbers();
+                } else {
+                    const responseText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${responseText}`);
+                }
+            } catch (error) {
+                errorText.textContent = `❌ ${error.message}`;
+                errorMessage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = 'Join Queue';
+            }
+        });
+
+        function resetForm() {
+            document.getElementById('successOverlay').style.display = 'none';
+            document.body.style.overflow = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================
+        // INITIALIZATION - No Access Validation
+        // ============================================
+        (async function init() {
+            setupBranding();
+            renderServices();
+            // DEMO: Skip access validation - always show form
+            try {
+                await loadQueueData();
+                renderBarbers();
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden) loadQueueData().then(renderBarbers);
+                });
+                setInterval(async () => { await loadQueueData(); renderBarbers(); }, 90000);
+            } catch (err) {
+                console.error("Init error:", err);
+                renderBarbers(); // Still render barbers even if queue data fails
+            }
+        })();
+    </script>
+</body>
+
+</html>
