@@ -91,7 +91,7 @@ const SHOP_CONFIG = {
     // Update baseUrl to match your n8n instance
 
     api: {
-        baseUrl: "https://YOUR-N8N-INSTANCE.com/webhook",
+        baseUrl: "https:///n8n.srv1146840.hstgr.com/webhook",
 
         checkin: "/checkin",
         queue: "/api/queue",
